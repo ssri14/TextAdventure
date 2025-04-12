@@ -1,0 +1,31 @@
+name: Create Release from Tag
+
+# Run this workflow when a tag matching v*.*.* is pushed.
+on:
+  push:
+    tags:
+      - 'v*.*'
+
+# Set the permissions so the GITHUB_TOKEN can create releases.
+permissions:
+  contents: write
+
+jobs:
+  create_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: "Automated release created for tag ${{ github.ref }}."
+          draft: false
+          prerelease: false
+
